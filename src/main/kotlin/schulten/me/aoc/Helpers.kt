@@ -20,3 +20,7 @@ enum class Direction(val dx: Int, val dy: Int) {
   WEST(-1, 0),
   NORTHWEST(-1, -1),
 }
+
+data class Point(val x: Int, val y: Int)
+
+operator fun <T1, T2> Iterable<T1>.times(other: Iterable<T2>) = this.flatMap { a -> other.map { b -> a to b } }
