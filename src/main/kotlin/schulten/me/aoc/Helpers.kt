@@ -25,6 +25,23 @@ enum class Direction(val dx: Int, val dy: Int) {
 
 data class Point(val x: Int, val y: Int) {
   operator fun plus(direction: Direction) = Point(x + direction.dx, y + direction.dy)
+  operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+  operator fun times(multiplier: Int) = Point(x * multiplier, y * multiplier)
 }
 
 operator fun <T1, T2> Iterable<T1>.times(other: Iterable<T2>) = this.flatMap { a -> other.map { b -> a to b } }
+
+fun List<String>.toGrid(): Triple<Array<CharArray>, Int, Int> {
+  val maxX = first().length
+  val maxY = size
+
+  val array = (0..<maxX).map { CharArray(maxY) }.toTypedArray()
+
+  withIndex().forEach { (y, row) ->
+    row.withIndex().forEach { (x, c) ->
+      array[x][y] = c
+    }
+  }
+
+  return Triple(array, maxX, maxY)
+}
