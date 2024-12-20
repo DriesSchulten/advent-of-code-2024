@@ -19,14 +19,22 @@ enum class Direction(val dx: Int, val dy: Int) {
   SOUTHWEST(-1, 1),
   WEST(-1, 0),
   NORTHWEST(-1, -1);
+}
 
-
+infix fun Int.mod(mod: Int): Int {
+  return if (this >= mod || this < 0) {
+     val remainder = this % mod
+     if (remainder < 0) remainder + mod else remainder
+  } else {
+    this
+  }
 }
 
 data class Point(val x: Int, val y: Int) {
   operator fun plus(direction: Direction) = Point(x + direction.dx, y + direction.dy)
   operator fun plus(other: Point) = Point(x + other.x, y + other.y)
   operator fun times(multiplier: Int) = Point(x * multiplier, y * multiplier)
+  infix fun mod(other: Point) = Point(x mod other.x, y mod other.y)
 }
 
 operator fun <T1, T2> Iterable<T1>.times(other: Iterable<T2>) = this.flatMap { a -> other.map { b -> a to b } }
