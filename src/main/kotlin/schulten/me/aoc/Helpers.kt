@@ -23,8 +23,8 @@ enum class Direction(val dx: Int, val dy: Int) {
 
 infix fun Int.mod(mod: Int): Int {
   return if (this >= mod || this < 0) {
-     val remainder = this % mod
-     if (remainder < 0) remainder + mod else remainder
+    val remainder = this % mod
+    if (remainder < 0) remainder + mod else remainder
   } else {
     this
   }
@@ -52,4 +52,34 @@ fun List<String>.toGrid(): Triple<Array<CharArray>, Int, Int> {
   }
 
   return Triple(array, maxX, maxY)
+}
+
+fun Array<CharArray>.findPosition(c: Char): Point? {
+  indices.map { x ->
+    this[x].indices.map { y ->
+      if (this[x][y] == c) {
+        return Point(x, y)
+      }
+    }
+  }
+
+  return null
+}
+
+operator fun Array<CharArray>.get(point: Point) = this[point.x][point.y]
+operator fun Array<CharArray>.set(point: Point, value: Char) {
+  this[point.x][point.y] = value
+}
+
+fun Array<CharArray>.swap(a: Point, b: Point) {
+  val temp = this[a]
+  this[a] = this[b]
+  this[b] = temp
+}
+
+fun Array<CharArray>.print() {
+  this.indices.forEach { y ->
+    this[y].indices.forEach { x -> print(this[x][y]) }
+    println()
+  }
 }
