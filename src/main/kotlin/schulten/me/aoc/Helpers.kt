@@ -83,3 +83,6 @@ fun Array<CharArray>.print() {
     println()
   }
 }
+
+fun Array<CharArray>.neighbours(point: Point): List<Pair<Point, Direction>> =
+  listOf(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST).map { dir -> point + dir to dir }

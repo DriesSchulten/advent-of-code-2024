@@ -36,11 +36,13 @@ data class Computer(var registerA: Long, var registerB: Long, var registerC: Lon
               else -> error("Impossible")
             }
           }
+
           Instruction.BXL -> registerB = registerB xor operand.toLong()
           Instruction.BST -> registerB = comboValue(operand) % 8
           Instruction.JNZ -> if (registerA != 0L) {
             instructionPointer = operand - 2
           }
+
           Instruction.BXC -> registerB = registerB xor registerC
           Instruction.OUT -> add(comboValue(operand) % 8)
         }
@@ -78,5 +80,17 @@ fun main() {
   val computer = Computer.fromString(input)
   val program = input.last().split(" ").last().split(",").map { it.toInt() }
 
-  println(computer.executeProgram(program).joinToString(separator = ","))
+  println(computer.copy().executeProgram(program).joinToString(separator = ","))
+
+  println(program.reversed().map { it.toLong() }.fold(listOf(0L)) { candidates, instruction ->
+    candidates.flatMap { candidate ->
+      val shifted = candidate shl 3
+      (shifted..shifted + 8).mapNotNull { attempt ->
+        computer.copy().run {
+          registerA = attempt
+          attempt.takeIf { executeProgram(program).first() == instruction }
+        }
+      }
+    }
+  }.first())
 }
