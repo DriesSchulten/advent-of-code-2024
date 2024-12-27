@@ -35,11 +35,14 @@ data class Point(val x: Int, val y: Int) {
   operator fun plus(other: Point) = Point(x + other.x, y + other.y)
   operator fun times(multiplier: Int) = Point(x * multiplier, y * multiplier)
   infix fun mod(other: Point) = Point(x mod other.x, y mod other.y)
+
+  fun neighbours(grid: Array<CharArray>): List<Point> = neighbours(this).map { it.first }
 }
+
 
 operator fun <T1, T2> Iterable<T1>.times(other: Iterable<T2>) = this.flatMap { a -> other.map { b -> a to b } }
 
-fun List<String>.toGrid(): Triple<Array<CharArray>, Int, Int> {
+fun List<String>.toGrid(): Array<CharArray> {
   val maxX = first().length
   val maxY = size
 
@@ -51,7 +54,7 @@ fun List<String>.toGrid(): Triple<Array<CharArray>, Int, Int> {
     }
   }
 
-  return Triple(array, maxX, maxY)
+  return array
 }
 
 fun Array<CharArray>.findPosition(c: Char): Point? {
@@ -70,6 +73,7 @@ operator fun Array<CharArray>.get(point: Point) = this[point.x][point.y]
 operator fun Array<CharArray>.set(point: Point, value: Char) {
   this[point.x][point.y] = value
 }
+operator fun Array<CharArray>.contains(point: Point) = point.x in this.indices && point.y in this[point.x].indices
 
 fun Array<CharArray>.swap(a: Point, b: Point) {
   val temp = this[a]
@@ -77,12 +81,5 @@ fun Array<CharArray>.swap(a: Point, b: Point) {
   this[b] = temp
 }
 
-fun Array<CharArray>.print() {
-  this.indices.forEach { y ->
-    this[y].indices.forEach { x -> print(this[x][y]) }
-    println()
-  }
-}
-
-fun Array<CharArray>.neighbours(point: Point): List<Pair<Point, Direction>> =
+fun neighbours(point: Point): List<Pair<Point, Direction>> =
   listOf(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST).map { dir -> point + dir to dir }
