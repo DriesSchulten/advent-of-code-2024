@@ -33,7 +33,7 @@ fun calculateGPS(warehouse: Array<CharArray>): Long = warehouse.indices.flatMap 
 fun main() {
   val input = lines("/input/Day15.txt")
 
-  val (warehouse, _, _) = input.takeWhile { it != "" }.toGrid()
+  val warehouse = input.takeWhile { it != "" }.toGrid()
   val moves = input.takeLastWhile { it != "" }.joinToString(separator = "").toCharArray()
 
   val robot = warehouse.findPosition('@')!!

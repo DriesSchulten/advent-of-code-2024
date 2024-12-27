@@ -19,7 +19,7 @@ fun pathCost(maze: Array<CharArray>, start: Point, end: Point): Long {
       return minValue
     }
 
-    val neighbours = maze.neighbours(current).filter { maze[it.first] != '#' }
+    val neighbours = neighbours(current).filter { maze[it.first] != '#' }
 
     neighbours.forEach { (delta, direction) ->
       val rotationCost = direction.rotationCost(currentDirection)
@@ -37,7 +37,7 @@ fun pathCost(maze: Array<CharArray>, start: Point, end: Point): Long {
 
 fun main() {
   val input = lines("/input/Day16.txt")
-  val (maze, _, _) = input.takeWhile { it != "" }.toGrid()
+  val maze = input.takeWhile { it != "" }.toGrid()
 
   val start = maze.findPosition('S')!!
   val end = maze.findPosition('E')!!

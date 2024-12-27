@@ -1,28 +1,41 @@
 package schulten.me.aoc
 
-fun main() {
-  val (map, maxX, maxY) = lines("/input/Day12.txt").toGrid()
+data class Region(val name: Char, val area: Int, val perimeter: Int)
 
-  fun area(points: List<Point>): Int = points.size
+fun Array<CharArray>.findRegion(start: Point, seen: MutableSet<Point>): Region {
+  val target = this[start]
+  val queue = mutableListOf(start)
 
-  fun Point.inGrid(): Boolean = x in 0..<maxX && y in 0..<maxY
+  var area = 0
+  var perimeter = 0
 
-  fun perimeter(plant: Char, points: List<Point>): Int {
-    fun perimeter(point: Point): Int =
-      setOf(
-        point + Direction.NORTH,
-        point + Direction.EAST,
-        point + Direction.SOUTH,
-        point + Direction.WEST,
-      ).filter { (it.inGrid() && map[it.x][it.y] != plant) || !it.inGrid() }.size
+  while (queue.isNotEmpty()) {
+    val plant = queue.removeFirst()
 
-    val res = points.sumOf { perimeter(it) }
-    println(res)
-    return res
+    if (plant in this && this[plant] == target && plant !in seen) {
+      seen += plant
+      area++
+      val neighbors = plant.neighbours(this)
+      queue.addAll(neighbors)
+      perimeter += neighbors.count { it !in this || this[it] != target }
+    }
   }
 
-  val plants =
-    map.indices.flatMap { x -> map[x].indices.map { y -> map[x][y] to Point(x, y) } }.groupBy(keySelector = { it.first }, valueTransform = { it.second })
-  println(plants.map { (plant, points) -> area(points) * perimeter(plant, points) }.sum())
+  return Region(target, area, perimeter)
+}
+
+fun main() {
+  val map = lines("/input/Day12.txt").toGrid()
+
+  val seen = mutableSetOf<Point>()
+  val plants = map.indices.flatMap { x -> map[x].indices.map { y -> Point(x, y) } }.mapNotNull { plant ->
+    if (plant !in seen) {
+      map.findRegion(plant, seen)
+    } else {
+      null
+    }
+  }
+
+  println(plants.sumOf { region -> region.area * region.perimeter })
 }
 
